@@ -1,0 +1,5 @@
+*.pyc
+*.egg-info
+dist
+example_project/glossary.db
+example_project/local_settings.py
