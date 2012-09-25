@@ -7,6 +7,8 @@ A reusable Django app for glossing terms with rollover interactions.
 
 Add `glossary` to your `INSTALLED_APPS` and run `syncdb`.
 
+Optionally, you can set the `GLOSSARY_CONTEXT_VARIABLE` setting to determine the name of the glossary variable in the template context. This setting defaults to `"TT_GLOSSARY"`.
+
 
 ### Usage
 

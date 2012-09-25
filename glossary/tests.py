@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.template import Context, Template
 from django.test import TestCase
 
 from glossary.models import Glossary, Term
+from glossary.templatetags.glossary import CONTEXT_VARIABLE
 
 
 class TestGlossary(TestCase):
@@ -28,8 +30,11 @@ class TestGlossary(TestCase):
                 definition=u'Texas Higher Education Coordinating Board')
         context = Context({'object': t})
         template = Template("{% load glossary %}{% gloss object.name %}")
+        variable = getattr(settings, 'GLOSSARY_CONTEXT_VARIABLE',
+                           CONTEXT_VARIABLE)
         html = template.render(context=context)
         self.assertEqual(html, '<abbr class="gloss">%s</abbr>' % t.name)
+        self.assertTrue(variable not in context)
         template = Template("""
             {% load glossary %}
             {% load_glossary "Higher Ed" %}
@@ -39,3 +44,4 @@ class TestGlossary(TestCase):
         self.assertTrue('<abbr class="gloss glossed"' in html)
         self.assertTrue('title="%s"' % t.definition in html)
         self.assertTrue('>%s</abbr>' % t.name in html)
+        self.assertTrue(variable in context)

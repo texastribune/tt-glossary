@@ -1,26 +1,30 @@
 from __future__ import absolute_import
 
 from django import template
+from django.conf import settings
 
 from glossary.models import Term
 
-GLOSSARY_CONTEXT_VARIABLE = 'TT_GLOSSARY'
+CONTEXT_VARIABLE = 'TT_GLOSSARY'
 
 register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
 def load_glossary(context, glossary_name):
-    if not GLOSSARY_CONTEXT_VARIABLE in context:
-        context[GLOSSARY_CONTEXT_VARIABLE] = {}
-    context_glossary = context[GLOSSARY_CONTEXT_VARIABLE]
+    variable = getattr(settings, 'GLOSSARY_CONTEXT_VARIABLE', CONTEXT_VARIABLE)
+    if not variable in context:
+        context[variable] = {}
+
+    glossary = context[variable]
     for term in Term.objects.filter(glossary__name=glossary_name):
-        context_glossary[term.name] = term.definition
+        glossary[term.name] = term.definition
 
 
 @register.simple_tag(takes_context=True)
 def gloss(context, term_name):
-    glossary = context.get(GLOSSARY_CONTEXT_VARIABLE, {})
+    variable = getattr(settings, 'GLOSSARY_CONTEXT_VARIABLE', CONTEXT_VARIABLE)
+    glossary = context.get(variable, {})
     definition = glossary.get(term_name)
     if definition:
         return u'<abbr class="gloss glossed" title="%s">%s</abbr>' % (
