@@ -29,7 +29,7 @@ def gloss(context, term_name):
     glossary = context.get(variable, {})
     definition = glossary.get(term_name)
     if definition:
-        return u'<abbr class="gloss glossed" title="%s">%s</abbr>' % (
+        return u'<dfn data-glossed="true" data-definition="%s">%s</dfn>' % (
             definition, term_name)
     else:
-        return u'<abbr class="gloss">%s</abbr>' % term_name
+        return u'<dfn data-glossed="true">%s</dfn>' % term_name

@@ -32,7 +32,7 @@ class TestGlossary(TestCase):
         template = Template("{% load glossary %}{% gloss object.name %}")
         variable = get_context_variable()
         html = template.render(context=context)
-        self.assertEqual(html, '<abbr class="gloss">%s</abbr>' % t.name)
+        self.assertEqual(html, '<dfn data-glossed="true">%s</dfn>' % t.name)
         self.assertTrue(variable not in context)
         template = Template("""
             {% load glossary %}
@@ -40,7 +40,7 @@ class TestGlossary(TestCase):
             {% gloss object.name %}
         """)
         html = template.render(context=context)
-        self.assertTrue('<abbr class="gloss glossed"' in html)
-        self.assertTrue('title="%s"' % t.definition in html)
-        self.assertTrue('>%s</abbr>' % t.name in html)
+        self.assertTrue('<dfn data-glossed="true"' in html)
+        self.assertTrue('data-definition="%s"' % t.definition in html)
+        self.assertTrue('>%s</dfn>' % t.name in html)
         self.assertTrue(variable in context)
