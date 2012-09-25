@@ -5,14 +5,16 @@ from django.conf import settings
 
 from glossary.models import Term
 
-CONTEXT_VARIABLE = 'TT_GLOSSARY'
-
 register = template.Library()
+
+
+def get_context_variable():
+    return getattr(settings, 'GLOSSARY_CONTEXT_VARIABLE', 'TT_GLOSSARY')
 
 
 @register.simple_tag(takes_context=True)
 def load_glossary(context, glossary_name):
-    variable = getattr(settings, 'GLOSSARY_CONTEXT_VARIABLE', CONTEXT_VARIABLE)
+    variable = get_context_variable()
     if not variable in context:
         context[variable] = {}
 
@@ -23,7 +25,7 @@ def load_glossary(context, glossary_name):
 
 @register.simple_tag(takes_context=True)
 def gloss(context, term_name):
-    variable = getattr(settings, 'GLOSSARY_CONTEXT_VARIABLE', CONTEXT_VARIABLE)
+    variable = get_context_variable()
     glossary = context.get(variable, {})
     definition = glossary.get(term_name)
     if definition:
