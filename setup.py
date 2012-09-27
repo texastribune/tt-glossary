@@ -2,9 +2,10 @@ from distutils.core import setup
 from setuptools import find_packages
 import os.path
 
+import glossary
 
 setup(name='tt_glossary',
-      version='0.1.0',
+      version=glossary.__version__,
       description='Django app for glossing and editing terms',
       author='Texas Tribune',
       author_email='tech@texastribune.org',
