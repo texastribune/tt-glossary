@@ -24,12 +24,17 @@ def get_or_create_context_glossary(context):
 def load_glossary(context, glossary_name):
     glossary = get_or_create_context_glossary(context)
     for term in Term.objects.filter(glossary__name=glossary_name):
-        glossary[term.name] = term
+        glossary[term.name.lower()] = term
     return ''
 
 
 @register.inclusion_tag('glossary/includes/dfn.html', takes_context=True)
 def gloss(context, term_name):
     glossary = get_or_create_context_glossary(context)
-    term = glossary.get(term_name, term_name)
+    lower_term_name = term_name.lower()
+    if lower_term_name in glossary:
+        term = glossary[lower_term_name]
+        term.name = term_name
+    else:
+        term = term_name
     return {'term': term}

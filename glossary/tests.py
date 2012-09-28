@@ -39,7 +39,7 @@ class TestGlossary(TestCase):
                 definition=u'Texas Higher Education Coordinating Board')
         context = Context({'object': t})
         template = Template('{% load glossary %}{% gloss object.name %}')
-        html = template.render(context=context).strip()
+        html = template.render(context=context)
         self.assertEqual(html, '<dfn data-glossed="true">%s</dfn>' % t.name)
         template = Template('{% load glossary %}' +
                             '{% load_glossary "Higher Ed" %}' +
@@ -48,3 +48,13 @@ class TestGlossary(TestCase):
         self.assertTrue('<dfn data-glossed="true"' in html)
         self.assertTrue('data-definition="%s"' % t.definition in html)
         self.assertTrue('>%s</dfn>' % t.name in html)
+
+    def test_gloss_tag_preserves_case(self):
+        g = Glossary.objects.create(name=u'Higher Ed')
+        t = Term.objects.create(glossary=g, name=u'THECB', definition=u'N/A')
+        context = Context()
+        load_glossary(context, g.name)
+        data = gloss(context, 'thecb')
+        self.assertEqual(data['term'].id, t.id)
+        self.assertEqual(data['term'].name, 'thecb')
+        self.assertEqual(data['term'].definition, 'N/A')
